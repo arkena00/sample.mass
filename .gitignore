@@ -1,0 +1,13 @@
+Binaries
+Build
+DerivedDataCache
+Platforms
+Saved
+Intermediate
+Local
+
+.idea
+.vs
+.vscode
+.vsconfig
+*.DotSettings.user
