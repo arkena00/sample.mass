@@ -14,34 +14,28 @@ void UMSEntitySystem::Spawn(UMassEntityConfigAsset* EntityConfig, const FTransfo
 {
     const FMassEntityTemplate& EntityTemplate = EntityConfig->GetOrCreateEntityTemplate(*GetWorld());
 
+    int SqrtCount = FMath::Sqrt((float)Count);
 
+    int j = 0;
     for (int i = 0; i < Count; ++i)
     {
         TArray<FInstancedStruct> FragmentStructs;
         FTransformFragment TransformData;
 
         FVector RabbitLocation = Transform.GetLocation();
-        RabbitLocation.X += i * 500;
+        RabbitLocation.X = (i % SqrtCount) * 100;
+        if (i % SqrtCount == 0) ++j;
+        RabbitLocation.Y = j * 100;
         TransformData.SetTransform(FTransform(RabbitLocation));
 
         auto* ReplicationSubsystem = GetWorld()->GetSubsystem<UMassReplicationSubsystem>();
-        // Need to manually set NetID because the UMassNetworkIDFragmentInitializer observer is not trigger by CreateEntity, only by BatchCreateEntities
-        FMassNetworkIDFragment NetIdData;
-        NetIdData.NetID = ReplicationSubsystem->GetNextAvailableMassNetID();
-        FReplicationTemplateIDFragment TemplateIdData;
-        TemplateIdData.ID = EntityTemplate.GetTemplateID();
-
         FragmentStructs.Emplace(FInstancedStruct::Make(TransformData));
-        FragmentStructs.Emplace(FInstancedStruct::Make(NetIdData));
-        FragmentStructs.Emplace(FInstancedStruct::Make(TemplateIdData));
-
-        if (EntityTemplate.IsValid())
-        {
-            auto Entity = EntityManager->CreateEntity(EntityTemplate.GetArchetype(), EntityTemplate.GetSharedFragmentValues());
-            EntityManager->SetEntityFragmentsValues(Entity, EntityTemplate.GetInitialFragmentValues());
-            EntityManager->SetEntityFragmentsValues(Entity, FragmentStructs);
-        }
     }
+
+    TArray<FMassEntityHandle> Entities;
+    auto CreationContext = EntityManager->BatchCreateEntities(EntityTemplate.GetArchetype(), EntityTemplate.GetSharedFragmentValues(), Count, Entities);
+    TConstArrayView<FInstancedStruct> FragmentInstances = EntityTemplate.GetInitialFragmentValues();
+    EntityManager->BatchSetEntityFragmentsValues(CreationContext->GetEntityCollection(), FragmentInstances);
 }
 
 void UMSEntitySystem::Initialize(FSubsystemCollectionBase& Collection)

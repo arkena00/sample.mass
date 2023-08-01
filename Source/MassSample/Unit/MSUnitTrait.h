@@ -4,7 +4,7 @@
 #include "MassEntityTraitBase.h"
 #include "MassLODFragments.h"
 #include "MassMovementFragments.h"
-#include "MSHealthFragment.h"
+#include "MSUnitFragments.h"
 #include "Example/MassSimpleMovementTrait.h"
 #include "MSUnitTrait.generated.h"
 
@@ -19,15 +19,13 @@ protected:
     {
         BuildContext.AddFragment<FTransformFragment>();
         BuildContext.AddFragment<FMSHealthFragment>();
+        BuildContext.AddFragment<FMSTargetFragment>();
 
         // Fragments required by MassVisualizationTrait
         BuildContext.AddFragment<FMassActorFragment>();
         BuildContext.AddFragment<FMassViewerInfoFragment>();
 
         // Movement
-        auto& Velocity = BuildContext.AddFragment_GetRef<FMassVelocityFragment>();
-        Velocity.Value.X = 100;
-        Velocity.Value.Y = 100;
         BuildContext.AddTag<FMassSimpleMovementTag>();
     }
 };

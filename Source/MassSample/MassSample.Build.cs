@@ -11,7 +11,9 @@ public class MassSample : ModuleRules
         PublicDependencyModuleNames.AddRange(new string[]
         {
             "Core", "CoreUObject", "Engine", "InputCore", "NetCore"
-            , "MassEntity", "MassCommon", "MassMovement", "MassSpawner", "MassRepresentation", "MassLOD", "MassReplication", "MassActors", "AIModule"
+            , "MassEntity", "MassCommon", "MassMovement", "MassSpawner", "MassRepresentation", "MassLOD", "MassReplication", "MassSignals", "MassActors"
+            , "AIModule", "MassAIBehavior"
+            , "StateTreeModule"
             , "StructUtils"
         });
 
