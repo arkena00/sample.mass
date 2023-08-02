@@ -14,28 +14,25 @@ void UMSEntitySystem::Spawn(UMassEntityConfigAsset* EntityConfig, const FTransfo
 {
     const FMassEntityTemplate& EntityTemplate = EntityConfig->GetOrCreateEntityTemplate(*GetWorld());
 
+    TArray<FMassEntityHandle> Entities;
+    auto CreationContext = EntityManager->BatchCreateEntities(EntityTemplate.GetArchetype(), EntityTemplate.GetSharedFragmentValues(), Count, Entities);
+    TConstArrayView<FInstancedStruct> FragmentInstances = EntityTemplate.GetInitialFragmentValues();
+    EntityManager->BatchSetEntityFragmentsValues(CreationContext->GetEntityCollection(), FragmentInstances);
+
     int SqrtCount = FMath::Sqrt((float)Count);
 
     int j = 0;
-    for (int i = 0; i < Count; ++i)
+    for (int i = 0; i < Entities.Num(); ++i)
     {
-        TArray<FInstancedStruct> FragmentStructs;
-        FTransformFragment TransformData;
+        FMassEntityView EntityView(EntityTemplate.GetArchetype(), Entities[i]);
+        auto& TransformData = EntityView.GetFragmentData<FTransformFragment>();
 
         FVector RabbitLocation = Transform.GetLocation();
         RabbitLocation.X = (i % SqrtCount) * 100;
         if (i % SqrtCount == 0) ++j;
         RabbitLocation.Y = j * 100;
         TransformData.SetTransform(FTransform(RabbitLocation));
-
-        auto* ReplicationSubsystem = GetWorld()->GetSubsystem<UMassReplicationSubsystem>();
-        FragmentStructs.Emplace(FInstancedStruct::Make(TransformData));
     }
-
-    TArray<FMassEntityHandle> Entities;
-    auto CreationContext = EntityManager->BatchCreateEntities(EntityTemplate.GetArchetype(), EntityTemplate.GetSharedFragmentValues(), Count, Entities);
-    TConstArrayView<FInstancedStruct> FragmentInstances = EntityTemplate.GetInitialFragmentValues();
-    EntityManager->BatchSetEntityFragmentsValues(CreationContext->GetEntityCollection(), FragmentInstances);
 }
 
 void UMSEntitySystem::Initialize(FSubsystemCollectionBase& Collection)

@@ -18,11 +18,10 @@ bool FStateTreeTask_Move::Link(FStateTreeLinker& Linker)
 EStateTreeRunStatus FStateTreeTask_Move::EnterState(FStateTreeExecutionContext& Context,
     const FStateTreeTransitionResult& Transition) const
 {
-    GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Yellow, "Start Move");
 
     const FMassStateTreeExecutionContext& MassContext = static_cast<FMassStateTreeExecutionContext&>(Context);
     FMassVelocityFragment& MassVelocityFragment = MassContext.GetExternalData(VelocityHandle);
-    MassVelocityFragment.Value = { 100, 0, 0 };
+    MassVelocityFragment.Value = { FMath::FRandRange(-100.f, 100.f), FMath::FRandRange(-100.f, 100.f), 0 };
 
     UMassSignalSubsystem& MassSignalSubsystem = MassContext.GetExternalData(MassSignalSubsystemHandle);
     MassSignalSubsystem.DelaySignalEntity(UE::Mass::Signals::StandTaskFinished, MassContext.GetEntity(), 2);

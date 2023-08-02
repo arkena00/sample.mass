@@ -4,6 +4,7 @@
 #include "MassEntityTraitBase.h"
 #include "MassLODFragments.h"
 #include "MassMovementFragments.h"
+#include "MassSimulationLOD.h"
 #include "MSUnitFragments.h"
 #include "Example/MassSimpleMovementTrait.h"
 #include "MSUnitTrait.generated.h"
@@ -27,5 +28,8 @@ protected:
 
         // Movement
         BuildContext.AddTag<FMassSimpleMovementTag>();
+
+        // LOD
+        BuildContext.AddTag<FMassCollectLODViewerInfoTag>();
     }
 };

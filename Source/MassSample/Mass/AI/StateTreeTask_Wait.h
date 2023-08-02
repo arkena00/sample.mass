@@ -37,7 +37,6 @@ struct MASSSAMPLE_API FStateTreeTask_Wait : public FMassStateTreeTaskBase
     virtual EStateTreeRunStatus EnterState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const override
     {
         auto& Data = Context.GetInstanceData(*this);
-        GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Yellow, "Start Wait");
 
         const FMassStateTreeExecutionContext& MassContext = static_cast<FMassStateTreeExecutionContext&>(Context);
         FMassVelocityFragment& MassVelocityFragment = MassContext.GetExternalData(VelocityHandle);
@@ -63,7 +62,6 @@ struct MASSSAMPLE_API FStateTreeTask_Wait : public FMassStateTreeTaskBase
 
     virtual void StateCompleted(FStateTreeExecutionContext& Context, const EStateTreeRunStatus CompletionStatus, const FStateTreeActiveStates& CompletedActiveStates) const override
     {
-        GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Yellow, "End Wait");
     }
 
     TStateTreeExternalDataHandle<UMassSignalSubsystem> MassSignalSubsystemHandle;
